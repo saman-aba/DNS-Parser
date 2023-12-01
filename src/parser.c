@@ -5,7 +5,7 @@ void parse_dns(const char *in, uint32_t offt, dns_msg_t *out)
     if(out == NULL)
         out = malloc(sizeof(dns_msg_t));
     dns_header_parser(in,&offt,out);
-    
+
 }
 
 uint32_t dns_header_parser  (const char *in, uint32_t *offt, dns_msg_t *out)
@@ -47,6 +47,60 @@ uint32_t dns_header_parser  (const char *in, uint32_t *offt, dns_msg_t *out)
     return 0;
 }
 
+uint32_t    dns_rr_parser       (const char *in, uint32_t *offt, dns_msg_t *out)
+{
+    if(out == NULL)
+        return -1;
+
+    uint32_t position = *offt;
+
+    for(int i= 0 ; i < out->dheader->qdcount; i++)
+    {
+        dns_rr_t *rr = malloc(sizeof(dns_rr_t));
+        uint32_t name_len = 0;
+        uint32_t lbl_count = 0;
+        uint32_t lbl_len = 0;
+        while(in[position] != 0x00)
+        {
+            if((in[position] & 0xc0) == 0xc0)
+            {
+                position = in[position + 1] & 0x3f;
+            }
+            lbl_len = in[position] & 0x3f;
+            position++;
+            name_len += lbl_len;
+            position += lbl_len;
+            lbl_count++;
+        }
+        name_len += (lbl_count - 1);
+        position -= (name_len + 1);
+
+        char name[name_len];
+        uint32_t name_pos = 0;
+        while(in[position] != 0X00)
+        {
+            lbl_len = in[position] & 0x3f;
+            position++;
+            for(int j = 0 ; j < lbl_len ; j++)
+            {
+                name[name_pos] = in[position];
+                name_pos++;
+                position++;
+            }
+            if(name_pos != name_len)
+            {
+                name[name_pos] = '.';
+                name_pos++;
+            }
+
+        }
+        rr->name = name;
+
+        out->question = rr;
+
+    }
+    return 0;
+}
 void print_dns_header(dns_msg_t *msg)
 {
     char *operation;
