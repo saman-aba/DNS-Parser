@@ -1,8 +1,10 @@
 #include <stdint.h>
+#include <stdlib.h>
 
-typedef struct _dns_header dns_header_t;
-typedef struct _dns_msg dns_msg_t;
-struct _dns_header{
+typedef struct dns_header dns_header_t;
+typedef struct dns_msg_ dns_msg_t;
+
+struct dns_header_{
     uint16_t id;
     uint8_t QR;
     uint8_t opcode;
@@ -21,12 +23,12 @@ struct _dns_header{
     char *rest;
 };
 
-struct _dns_rr{
+struct dns_rr_{
     char *name;
 
 };
 
-struct _dns_msg{
+struct dns_msg_{
     dns_header_t *dheader;
 
 };
