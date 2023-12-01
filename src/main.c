@@ -14,9 +14,10 @@ const char resp[] ={0x00};
 
 int main(int argc, char **argv)
 {
-    dns_msg_t *dns;
+    dns_msg_t *dns = malloc(sizeof(dns_msg_t));
 
-    dns_header_parser(req, 0, dns);
+    uint32_t offset = 0;
+    dns_header_parser(req, &offset, dns);
     print_dns_header(dns);
 //    dns_header_t *header;
 //    dns_parser(0, &dns_header, pload);

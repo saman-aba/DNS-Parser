@@ -4,6 +4,7 @@
 typedef struct dns_msg_ dns_msg_t;
 typedef struct dns_header_ dns_header_t;
 typedef struct dns_rr_ dns_rr_t;
+
 #define OP_QUERY    0   //  Standard query
 #define OP_IQUERY   1   //  Inverse query
 #define OP_STATUS   2   //  DNS status request

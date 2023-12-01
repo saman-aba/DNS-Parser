@@ -1,14 +1,16 @@
 #include "parser.h"
 #include "gutils.h"
-void parse_dns          (const char *in, uint32_t offt, dns_msg_t *out)
+void parse_dns(const char *in, uint32_t offt, dns_msg_t *out)
 {
-
+    if(out == NULL)
+        out = malloc(sizeof(dns_msg_t));
+    dns_header_parser(in,&offt,out);
     
 }
 
 uint32_t dns_header_parser  (const char *in, uint32_t *offt, dns_msg_t *out)
 {
-    if(!out->dheader)
+    if(out->dheader == NULL)
         out->dheader = malloc(sizeof(dns_header_t));
     dns_header_t *hdr = out->dheader;
 
@@ -47,7 +49,39 @@ uint32_t dns_header_parser  (const char *in, uint32_t *offt, dns_msg_t *out)
 
 void print_dns_header(dns_msg_t *msg)
 {
+    char *operation;
+    switch (msg->dheader->opcode) {
+        case OP_QUERY:  operation = "standard";
+            break;
+        case OP_IQUERY: operation = "Inverse Query";
+            break;
+        case OP_NOTIFY: operation = "Notify";
+            break;
+        case OP_STATUS: operation = "Status";
+            break;
+        case OP_DDNS:   operation = "Dynamic DNS";
+            break;
+        case OP_NSID:   operation = "NSID";
+            break;
+        default:
+            break;
+    }
+    char *rcode;
+    switch(msg->dheader->rcode)
+    {
+        case R_NOERR: rcode = "No error";
+            break;
+        case R_FORMERR1: rcode = "Format error";
+
+    }
     LINE;
-    printf("Op Code\t: %d\n", msg->dheader->opcode);
-    printf("Q/R\t: %s\n", (msg->dheader->QR ? "Response": "Question") );
+    printf("Q/R : %s\tOp Code : %s\tRCode : %s\n",
+           (msg->dheader->QR ? "Response": "Question"),
+           operation,
+           rcode);
+    printf("Questions: %u\tAnswers: %u\tAuthorities: %u\tAdditionals %u\t",
+           msg->dheader->qdcount,
+           msg->dheader->ancount,
+           msg->dheader->qdcount,
+           msg->dheader->arcount);
 }
