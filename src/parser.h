@@ -4,6 +4,7 @@
 typedef struct dns_msg_ dns_msg_t;
 typedef struct dns_header_ dns_header_t;
 typedef struct dns_rr_ dns_rr_t;
+typedef struct dns_question_ dns_question_t;
 
 #define OP_QUERY    0   //  Standard query
 #define OP_IQUERY   1   //  Inverse query
@@ -38,12 +39,24 @@ struct dns_header_{
 };
 
 #define RR_CLS_IN   1   //  Internet
-#define RR_CLS_CH       //  CHAOS
-#define RR_CLS_HS       //  HESIOD
+#define RR_CLS_CH   2    //  CHAOS
+#define RR_CLS_HS   3    //  HESIOD
 
-#define RR_TYP_NS   
-#define RR_TYP_A    1   
+#define RR_TYP_NS       2
+#define RR_TYP_A        1   
+#define RR_TYP_QA       28   
+#define RR_TYP_CNAME    5
+#define RR_TYP_NAPTR    35
 
+
+struct dns_question_{
+    char *qname;
+    uint32_t nameln;
+    uint32_t lblcount;
+    uint16_t qtype;
+    uint16_t qclass;
+    dns_question_t *next;
+};
 
 struct dns_rr_{
     char *name;
@@ -57,17 +70,22 @@ struct dns_rr_{
 
 struct dns_msg_{
     dns_header_t *dheader;
-    dns_rr_t *question;
+    dns_question_t *question;
     dns_rr_t *answer;
     dns_rr_t *authority;
     dns_rr_t *additional;
 };
 
 
-void        parse_dns           (const char *in, uint32_t offt, dns_msg_t *out);
-uint32_t    dns_header_parser   (const char *in, uint32_t *offt, dns_msg_t *out);
+dns_msg_t *parse_dns (const char *in, uint32_t offt);
+
+dns_header_t *dns_header_parser   (const char *in, uint32_t *offt);
+uint32_t    dns_question_parser   (const char *in, uint32_t *offt, dns_msg_t *out);
 uint32_t    dns_rr_parser       (const char *in, uint32_t *offt, dns_msg_t *out);
 
+char *rr_name_parser (const char *in, uint32_t *offt, uint32_t *name_ln, uint32_t *lbl_count);
 
-void print_dns_header(dns_msg_t *msg);
+void print_dns_header   (dns_msg_t *msg);
+void print_dns_question (dns_msg_t *msg);
+void print_dns_rr       (dns_msg_t *msg);
 

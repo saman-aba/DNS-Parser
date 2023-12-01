@@ -16,17 +16,9 @@ const char resp[] ={0xc0};
 
 int main(int argc, char **argv)
 {
-    dns_msg_t *dns = malloc(sizeof(dns_msg_t));
-
     uint32_t offset = 0;
-    dns_header_parser(req, &offset, dns);
-//    print_dns_header(dns);
-    dns_rr_parser(req, &offset, dns);
-
-    printf("Name: %s",dns->question->name);
-//    dns_header_t *header;
-//    dns_parser(0, &dns_header, pload);
-
-//    printf("TransactionId : %04x", ntohs(dns_header.id));
+    dns_msg_t *dns = parse_dns(req, offset);
+    print_dns_header(dns);
+    print_dns_question(dns);
     return 0;
 }
