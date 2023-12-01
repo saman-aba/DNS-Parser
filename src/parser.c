@@ -67,9 +67,9 @@ uint32_t dns_question_parser (const char *in, uint32_t *offt, dns_msg_t *out)
 
 uint32_t dns_rr_parser (const char *in, uint32_t *offt, dns_msg_t *out)
 {
-    // if(out == NULL)
-    //     return -1;
-    
+    dns_rr_t *rr = malloc(sizeof(dns_rr_t));
+
+    //rr->name = rr_name_parser(in, offt,)
     // dns_rr_t *rr = malloc(sizeof(dns_rr_t));
     
     // rr->name = rr_name_parser(in, offt);
@@ -209,40 +209,41 @@ void print_dns_question (dns_msg_t *msg)
 }
 
 
-void print_dns_rr (dns_msg_t *msg)
+void print_dns_rr (dns_rr_t *rr)
 {
-    char *qtype;
-    switch (msg->question->qtype) {
-        case RR_TYP_A:      qtype = "A";
+    char *type;
+    switch (rr->type) {
+        case RR_TYP_A:      type = "A";
             break;
-        case RR_TYP_QA:     qtype = "AAAA";
+        case RR_TYP_QA:     type = "AAAA";
             break;
-        case RR_TYP_CNAME:  qtype = "CNAME";
+        case RR_TYP_CNAME:  type = "CNAME";
             break;
-        case RR_TYP_NAPTR:  qtype = "NAPTR";
+        case RR_TYP_NAPTR:  type = "NAPTR";
             break;
-        case RR_TYP_NS:     qtype = "NS";
+        case RR_TYP_NS:     type = "NS";
             break;
         default:
             break;
     }
 
-    char *qclass;
-    switch(msg->question->qclass)
+    char *class;
+    switch(rr->cls)
     {
-        case RR_CLS_CH: qclass = "CHAOS";
+        case RR_CLS_CH: class = "CHAOS";
             break;
-        case RR_CLS_HS: qclass = "HESIOD";
+        case RR_CLS_HS: class = "HESIOD";
             break;
-        case RR_CLS_IN: qclass = "IN";
+        case RR_CLS_IN: class = "IN";
             break;
 
     }
     LINE;
-    printf("Name : %s\tLength : %u\tLable Count : %u\nClass : %s\tType : %s\n",
-            msg->question->qname,
-            msg->question->lblcount,
-            msg->question->nameln,
-            qclass,
-            qtype);
+    printf("Name : %s\nClass : %s\tType : %s\nTTL : %lu\t Data Length : %u\nData : %s",
+            rr->name,
+            class,
+            type,
+            rr->ttl,
+            rr->rdlength,
+            rr->rdata);
 }

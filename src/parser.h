@@ -87,5 +87,5 @@ char *rr_name_parser (const char *in, uint32_t *offt, uint32_t *name_ln, uint32_
 
 void print_dns_header   (dns_msg_t *msg);
 void print_dns_question (dns_msg_t *msg);
-void print_dns_rr       (dns_msg_t *msg);
+void print_dns_rr       (dns_rr_t *rr);
 
