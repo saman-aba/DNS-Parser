@@ -14,6 +14,7 @@ const char req[] ={
 
 const char resp[] ={0xc0};
 
+<<<<<<< HEAD
 #include <time.h>
 #include <pcap.h>
 #include <netinet/in.h>
@@ -92,3 +93,13 @@ void print_packet_info(const char *packet, struct pcap_pkthdr packet_header) {
 // //    printf("TransactionId : %04x", ntohs(dns_header.id));
 //     return 0;
 // }
+=======
+int main(int argc, char **argv)
+{
+    uint32_t offset = 0;
+    dns_msg_t *dns = parse_dns(req, offset);
+    print_dns_header(dns);
+    print_dns_question(dns);
+    return 0;
+}
+>>>>>>> 04afa359d5e99dcc25947138df4fddb3ab4113fd
